@@ -2,7 +2,6 @@ package web.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -20,7 +19,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories("testweb")
+@EnableJpaRepositories("web")
 @PropertySource("classpath:db.properties")
 public class HibernateConfig {
 
@@ -37,7 +36,7 @@ public class HibernateConfig {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setJpaVendorAdapter(jpaVendorAdapter());
         em.setDataSource(dataSource());
-        em.setPackagesToScan("testweb");
+        em.setPackagesToScan("web");
         em.setJpaProperties(hibernateProperties());
         return em;
     }

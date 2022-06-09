@@ -4,13 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import web.model.User;
 import web.service.UserService;
+
+import javax.validation.Valid;
 
 @Controller
 public class UsersController {
@@ -22,17 +25,19 @@ public class UsersController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping()
     public String printUsers(ModelMap model) {
         model.addAttribute(userService.getAllUsers());
+        model.addAttribute("user", new User());
         return "user";
     }
 
-    @PostMapping
-    public String add(@ModelAttribute("user") User user,
-                      @RequestParam("name") String name,
-                      @RequestParam("lastName") String lastName,
-                      @RequestParam("email") String email) {
+    @PostMapping()
+    public String add(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        //добавлена валидация
+        if (bindingResult.hasErrors()){
+            return "user";
+        }
         userService.addUser(user);
         return "redirect:/";
     }
@@ -49,8 +54,14 @@ public class UsersController {
         return "editUser";
     }
 
-    @PostMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") Long id) {
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult, @PathVariable("id") Long id) {
+        //добавлена валидация
+        if (bindingResult.hasErrors()){
+            return "editUser";
+        }
+
         userService.updateUser(user);
         return "redirect:/";
     }
